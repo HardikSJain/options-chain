@@ -1,0 +1,72 @@
+CREATE TABLE "calls" (
+	"symbol"	TEXT NOT NULL,
+	"expiry_date"	DATE NOT NULL,
+	"strike_price"	INTEGER NOT NULL,
+	"LTP"	INTEGER NOT NULL,
+	"LTQ"	INTEGER NOT NULL,
+	"totalTradedVolume"	INTEGER NOT NULL,
+	"bestBid"	INTEGER NOT NULL,
+	"bestAsk"	INTEGER NOT NULL,
+	"bestBidQty"	INTEGER NOT NULL,
+	"bestAskQty"	INTEGER NOT NULL,
+	"openInterest"	INTEGER NOT NULL,
+	"timestamp"	TEXT NOT NULL,
+	"sequence"	INTEGER NOT NULL,
+	"prevClosePrice"	INTEGER NOT NULL,
+	"prevOpenInterest"	INTEGER NOT NULL,
+	PRIMARY KEY("expiry_date","symbol","strike_price")
+);
+
+CREATE TABLE "financials" (
+	"symbol"	TEXT NOT NULL,
+	"expiry_date"	DATE NOT NULL,
+	"LTP"	INTEGER NOT NULL,
+	"LTQ"	INTEGER NOT NULL,
+	"totalTradedVolume"	INTEGER NOT NULL,
+	"bestBid"	INTEGER NOT NULL,
+	"bestAsk"	INTEGER NOT NULL,
+	"bestBidQty"	INTEGER NOT NULL,
+	"bestAskQty"	INTEGER NOT NULL,
+	"openInterest"	INTEGER NOT NULL,
+	"timestamp"	TEXT NOT NULL,
+	"sequence"	INTEGER NOT NULL,
+	"prevClosePrice"	INTEGER NOT NULL,
+	"prevOpenInterest"	INTEGER NOT NULL,
+	PRIMARY KEY("expiry_date","symbol")
+);
+
+CREATE TABLE "indexes" (
+	"symbol"	TEXT NOT NULL,
+	"LTP"	INTEGER NOT NULL,
+	"LTQ"	INTEGER NOT NULL,
+	"totalTradedVolume"	INTEGER NOT NULL,
+	"bestBid"	INTEGER NOT NULL,
+	"bestAsk"	INTEGER NOT NULL,
+	"bestBidQty"	INTEGER NOT NULL,
+	"bestAskQty"	INTEGER NOT NULL,
+	"openInterest"	INTEGER NOT NULL,
+	"timestamp"	TEXT NOT NULL,
+	"sequence"	INTEGER NOT NULL,
+	"prevClosePrice"	INTEGER NOT NULL,
+	"prevOpenInterest"	INTEGER NOT NULL,
+	PRIMARY KEY("symbol")
+);
+
+CREATE TABLE "puts" (
+	"symbol"	TEXT NOT NULL,
+	"expiry_date"	DATE NOT NULL,
+	"strike_price"	INTEGER NOT NULL,
+	"LTP"	INTEGER NOT NULL,
+	"LTQ"	INTEGER NOT NULL,
+	"totalTradedVolume"	INTEGER NOT NULL,
+	"bestBid"	INTEGER NOT NULL,
+	"bestAsk"	INTEGER NOT NULL,
+	"bestBidQty"	INTEGER NOT NULL,
+	"bestAskQty"	INTEGER NOT NULL,
+	"openInterest"	INTEGER NOT NULL,
+	"timestamp"	TEXT NOT NULL,
+	"sequence"	INTEGER NOT NULL,
+	"prevClosePrice"	INTEGER NOT NULL,
+	"prevOpenInterest"	INTEGER NOT NULL,
+	PRIMARY KEY("expiry_date","symbol","strike_price")
+);
