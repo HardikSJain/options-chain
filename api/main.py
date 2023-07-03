@@ -18,7 +18,7 @@ Base=declarative_base()
 class All_expiry_symbols_meta(Base):
     __tablename__='all_expiry_symbols_meta'
     symbol=Column(String,nullable=False,primary_key=True)
-    expiry_date=Column(Date,nullable=False,primary_key=True)
+    expiry_date=Column(DateTime,nullable=False,primary_key=True)
     call=Column(Integer,default=0)
     put=Column(Integer,default=0)
     future=Column(Integer,default=0)
@@ -26,7 +26,7 @@ class All_expiry_symbols_meta(Base):
 class Futures(Base):
     __tablename__='futures'
     symbol=Column(String,nullable=False,primary_key=True)
-    expiry_date=Column(Date,nullable=False,primary_key=True)
+    expiry_date=Column(DateTime,nullable=False,primary_key=True)
     LTP=Column(Integer,nullable=False)
     LTQ=Column(Integer,nullable=False) 
     totalTradedVolume=Column(Integer,nullable=False)
@@ -43,7 +43,7 @@ class Futures(Base):
 class Calls(Base):
     __tablename__='calls'
     symbol=Column(String,nullable=False,primary_key=True)
-    expiry_date=Column(Date,nullable=False,primary_key=True)
+    expiry_date=Column(DateTime,nullable=False,primary_key=True)
     strike_price=Column(Integer,nullable=False,primary_key=True)
     LTP=Column(Integer,nullable=False)
     LTQ=Column(Integer,nullable=False) 
@@ -61,7 +61,7 @@ class Calls(Base):
 class Puts(Base):
     __tablename__='puts'
     symbol=Column(String,nullable=False,primary_key=True)
-    expiry_date=Column(Date,nullable=False,primary_key=True)
+    expiry_date=Column(DateTime,nullable=False,primary_key=True)
     strike_price=Column(Integer,nullable=False,primary_key=True)
     LTP=Column(Integer,nullable=False)
     LTQ=Column(Integer,nullable=False) 
@@ -92,12 +92,7 @@ class Indexes(Base):
     prevClosePrice=Column(Integer,nullable=False) 
     prevOpenInterest=Column(Integer,nullable=False)
 
-def convert(date_time):
-  # The format
-    format = '%b %d %Y %I:%M%p'
-    datetime_str = datetime.datetime.strptime(date_time, format)
- 
-    return datetime_str
+
 def convert_exiry_date_to_dateformat(expiry_date):
     months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
     index=-100
@@ -111,11 +106,10 @@ def convert_exiry_date_to_dateformat(expiry_date):
     month_num=months_dict[month]
     current_year = datetime.datetime.now().year
     current_year=str(current_year)[0:2]
-    formated_expiry_date=str(current_year+expiry_date[index+3:]+"-"+month_num+"-"+expiry_date[:index])
-    date_format = "%Y-%m-%d"
+    formated_expiry_date=str(current_year+expiry_date[index+3:]+"-"+month_num+"-"+expiry_date[:index])+" 15:15:00"
+    date_format = "%Y-%m-%d %H:%M:%S"
     datetime_object = datetime.datetime.strptime(formated_expiry_date, date_format)
-    date_object=datetime_object.date()
-    return(date_object)
+    return(datetime_object)
 
 def name_expiration_date_and_strike_price_for_ce_pe(symbol):
     months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
@@ -301,15 +295,6 @@ def retrieve_lines_from_terminal():
             extract_dict(str(line))
             pass
 
-
-# file_path_2='dummy2.txt'
-# # Open the file in read mode
-# with open(file_path_2, "r") as file:
-#     lines = file.readlines()
-# for line in lines:
-#     line=line.strip().replace("'", "\"")
-#     #print(line)
-#     mastersheet_updater(json.loads(line))
 if __name__=='__main__':
     retrieve_lines_from_terminal()
 

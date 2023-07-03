@@ -79,7 +79,9 @@
     font-size: 14px;
     color: #3A2E7D;
     padding-left: 10px;
-
+    max-height: 2000px;
+    /* Adjust the height as needed */
+    /* overflow-y: auto; */
 }
 
 .or {
@@ -214,4 +216,9 @@
 
 ::-webkit-scrollbar-thumb:hover {
     background: #9f9f9f;
+}
+
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
 }
