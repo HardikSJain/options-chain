@@ -7,7 +7,7 @@ function OptionMainScreen() {
     return (
 
         <>
-           
+
             <TopNavbar />
             <Hero />
             <OptionTable />

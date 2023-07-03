@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import TableTop from './tabletopHeader';
+// import Dropdown from './dropdown'
 import '../styles/styles.css';
 
-const API = "http://127.0.0.1:8080/api/symbol_date_option/FINANCIALS+04JUL23";
-const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-};
-
-function OptionTable() {
+const OptionTable = () => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
@@ -17,10 +11,17 @@ function OptionTable() {
 
         const fetchData = async () => {
             try {
-                const response = await fetch(API, { headers: headers });
+
+                let url;
+                // if (props.selSymbol && props.selExpiry) {
+                // url = 'http://127.0.0.1:8080/api/' + props.selSymbol + '+' + props.selExpiry;
+                // } else {
+                url = 'http://127.0.0.1:8080/api/symbol_date_option/FINANCIALS+04JUL23';
+                // }
+                const response = await fetch(url);
                 const jsonData = await response.json();
-                console.log("Fetched JSON:", jsonData);
-                console.log("Data:", jsonData.data);
+                console.log('Fetched JSON:', jsonData);
+                console.log('Data:', jsonData.data);
 
                 // Calculate the class name for changed cells
                 const updatedData = jsonData.data.map((item) => {
