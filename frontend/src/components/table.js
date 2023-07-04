@@ -25,6 +25,11 @@ const OptionTable = () => {
                     url = `${baseUrl}/symbol_date_option/${query}`;
                 }
 
+
+
+
+
+
                 const response = await fetch(url);
                 const jsonData = await response.json();
 
@@ -96,25 +101,25 @@ const OptionTable = () => {
                                 data.map((item, index) => (
                                     <tr key={index}>
                                         <td className={item.className}>{item.oi_c}</td>
-                                        <td className={item.className}>{item.oi_change_c}</td>
+                                        <td style={{ color: item.oi_change_c > 0 ? '#1A936F' : '#FF0000' }} className={item.className}>{item.oi_change_c}</td>
                                         <td className={item.className}>{item.volume_c}</td>
                                         <td className={item.className}>{item.iv_c}</td>
                                         <td className={item.className}>{item.bid_c}</td>
                                         <td className={item.className}>{item.bidqty_c}</td>
                                         <td className={item.className}>{item.ltp_c}</td>
-                                        <td className={item.className}>{item.change_c}</td>
+                                        <td style={{ color: item.change_c > 0 ? '#1A936F' : '#FF0000' }} className={item.className}>{item.change_c}</td>
                                         <td className={item.className}>{item.ask_c}</td>
                                         <td className={item.className}>{item.askqty_c}</td>
                                         <td className={item.className}>{item.strike_price}</td>
                                         <td className={item.className}>{item.bid_p}</td>
                                         <td className={item.className}>{item.bidqty_p}</td>
                                         <td className={item.className}>{item.ltp_p}</td>
-                                        <td className={item.className}>{item.change_p}</td>
+                                        <td style={{ color: item.oi_change_p > 0 ? '#1A936F' : '#FF0000' }} className={item.className}>{item.change_p}</td>
                                         <td className={item.className}>{item.ask_p}</td>
                                         <td className={item.className}>{item.askqty_p}</td>
                                         <td className={item.className}>{item.iv_p}</td>
                                         <td className={item.className}>{item.volume_p}</td>
-                                        <td className={item.className}>{item.oi_change_p}</td>
+                                        <td style={{ color: item.oi_change_p > 0 ? '#1A936F' : '#FF0000' }} className={item.className}>{item.oi_change_p}</td>
                                         <td className={item.className}>{item.oi_p}</td>
                                     </tr>
                                 ))
