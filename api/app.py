@@ -6,7 +6,7 @@ from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 import os
 import re
-
+import numpy as np
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -139,10 +139,42 @@ def contains_only_numerical(string):
 
 
 def symbolexists(symbol):
-    if (All_expiry_symbols_meta.query.filter(All_expiry_symbols_meta.symbol == symbol).first()):
+    exists = All_expiry_symbols_meta.query.filter(
+        All_expiry_symbols_meta.symbol == symbol).first()
+    if (exists):
         return True
     else:
         return False
+
+
+def time_to_maturity(expiry_date):
+    now = datetime.datetime.now()
+    time_to_expiry = expiry_date - now
+    days = time_to_expiry.days()
+    return (days)
+
+
+def black_scholes_call(underlying_stock_price, strikePrice, maturity, r, sigma):
+    d1 = (np.log(underlying_stock_price / strikePrice) + (r + sigma ** 2 / 2) * maturity) / \
+        (sigma * np.sqrt(maturity))
+    d2 = d1 - sigma * np.sqrt(maturity)
+    call = underlying_stock_price * \
+        N(d1) - strikePrice * np.exp(-r * maturity)*N(d2)
+    return call
+
+
+def impliedVolatility(maturity, market_price, strikePrice, r):
+    # 0.01 to 50 tak iterate karega with an increase of 0.001
+    volatility_values = np.arange(1, 60, 0.01)
+    # Creates an array of size same as volatility_values
+    price_differences = np.zeros_like(volatility_values)
+    for i in range(len(volatility_values)):
+        value = volatility_values[i]
+        price_differences[i] = market_price - black_scholes_call(
+            underlying_stock_price, strikePrice, maturity, r, value)
+    index_of_minimum_price = np.argmin(abs(price_differences))
+    implied_volatility = volatility_values[index_of_minimum_price]
+    return implied_volatility
 
 
 class Symbol_date_option_API(Resource):
@@ -198,6 +230,16 @@ class Symbol_date_option_API(Resource):
                                             int(i.LTQ)
                                         volumn_put_total = volumn_put_total + \
                                             int(symbol_put.LTQ)
+
+                                        # market_price_call =  i.LTP #LTP Price of the option
+                                        # market_price_put = symbol_put.LTP
+                                        # underlying_stock_price= Indexes.query.with_entities(Indexes.LTP).filter(Indexes.symbol).first()
+                                        # strikePrice = i.strike_price
+                                        # r = 0.05
+                                        # expiry_time=expiry
+                                        # ttm = time_to_maturity(expiry_time)
+                                        # iv_call=impliedVolatility(ttm,market_price_call,strikePrice,r)
+                                        # iv_put=impliedVolatility(ttm,market_price_put,strikePrice,r)
                                         final.append({'oi_c': i.openInterest, 'oi_change_c': (i.openInterest-i.prevOpenInterest), 'volume_c': i.LTQ, 'iv_c': intrensic_value(), 'ltp_c': (i.LTP/100), 'change_c': ((i.LTQ-i.prevClosePrice)/100), 'bidqty_c': i.bestBidQty, 'bid_c': i.bestBid, 'ask_c': i.bestAsk, 'askqty_c': i.bestAskQty, 'strike_price': i.strike_price, 'bidqty_p': symbol_put.bestBidQty,
                                                      'bid_p': symbol_put.bestBid, 'ask_p': symbol_put.bestAsk, 'askqty_p': symbol_put.bestAskQty, 'change_p': ((symbol_put.prevClosePrice-symbol_put.prevClosePrice)/100), 'ltp_p': (symbol_put.LTP/100), 'iv_p': intrensic_value(), 'volume_p': symbol_put.LTQ, 'oi_change_p': (symbol_put.prevOpenInterest-symbol_put.openInterest), 'oi_p': symbol_put.openInterest})
                                     else:
@@ -471,10 +513,46 @@ class Mounting_api(Resource):
             return ({'EOO1 : True'})
 
 
+class Symbol_option_API(Resource):
+    def get(self, symbol):
+        print('Entering')
+        if (symbolexists(symbol)):
+            print(1)
+            all_expiry_dates = All_expiry_symbols_meta.query.with_entities(All_expiry_symbols_meta.expiry_date).filter(All_expiry_symbols_meta.symbol == symbol and (
+                All_expiry_symbols_meta.put == 1 or All_expiry_symbols_meta.call == 1)).order_by(All_expiry_symbols_meta.expiry_date).distinct()
+            if (all_expiry_dates):
+                all_strike_price_call = Calls.query.with_entities(Calls.strike_price).filter(
+                    Calls.symbol == symbol).order_by(Calls.strike_price).distinct()
+                all_strike_price_put = Puts.query.with_entities(Puts.strike_price).filter(
+                    Puts.symbol == symbol).order_by(Puts.strike_price).distinct()
+                if (all_strike_price_call or all_strike_price_put):
+                    expiry_dates = []
+                    for i in all_expiry_dates:
+                        expiry_dates.append(
+                            date_converter_to_output_format(i.expiry_date.date()))
+                    all_strike_price = []
+                    for i in all_strike_price_call:
+                        all_strike_price.append(int(i.strike_price))
+                    for i in all_strike_price_put:
+                        all_strike_price.append(int(i.strike_price))
+                    print('okay')
+                    all_strike_price = list(set(all_strike_price))
+                    all_strike_price = sorted(all_strike_price)
+                    print(all_strike_price)
+                    return ({'expiry': expiry_dates, 'strike_price': all_strike_price})
+                else:
+                    return ({'E005 : True'})
+            else:
+                return ("E003 : True")
+        else:
+            return ("E001 : True")
+
+
 api.add_resource(Symbol_date_option_API,
                  '/api/symbol_date_option/<string:symbol>+<string:expiry>')
 api.add_resource(Symbol_price_option_API,
                  '/api/symbol_price_option/<string:symbol>+<string:price>')
+api.add_resource(Symbol_option_API, '/api/symbol_option/<string:symbol>')
 api.add_resource(Mounting_api, '/api/mount_options')
 
 if __name__ == '__main__':

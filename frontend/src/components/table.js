@@ -2,26 +2,32 @@ import React, { useEffect, useState } from 'react';
 import TableTop from './tabletopHeader';
 // import Dropdown from './dropdown'
 import '../styles/styles.css';
-
+import { UseSelector, useSelector } from 'react-redux';
+import { baseUrl } from '../constants';
 const OptionTable = () => {
     const [data, setData] = useState([]);
+    const query = useSelector(state => state.app.symbolAndExpiry)
 
     useEffect(() => {
         let prevData = [];
-
         const fetchData = async () => {
             try {
+                console.log(query);
 
                 let url;
                 // if (props.selSymbol && props.selExpiry) {
                 // url = 'http://127.0.0.1:8080/api/' + props.selSymbol + '+' + props.selExpiry;
                 // } else {
-                url = 'http://127.0.0.1:8080/api/symbol_date_option/FINANCIALS+04JUL23';
-                // }
+                // url = `${baseUrl}/symbol_date_option/${query}`;
+                if (query == '') {
+                    url = `https://2535-2401-4900-57db-5cf3-2c9d-a1b-d4de-4106.in.ngrok.io/api/mount_options`;
+                } else {
+                    url = `${baseUrl}/symbol_date_option/${query}`;
+                }
+
                 const response = await fetch(url);
                 const jsonData = await response.json();
-                console.log('Fetched JSON:', jsonData);
-                console.log('Data:', jsonData.data);
+
 
                 // Calculate the class name for changed cells
                 const updatedData = jsonData.data.map((item) => {
@@ -53,7 +59,7 @@ const OptionTable = () => {
         return () => {
             clearInterval(interval);
         };
-    }, []);
+    }, [query]);
     return (
         <>
             <TableTop />

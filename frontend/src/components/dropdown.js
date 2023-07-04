@@ -1,20 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import { useDispatch } from 'react-redux'
+import { setSymbolAndExpiry } from '../features/appSlice';
 import OptionTable from './table';
 import '../styles/styles.css';
+import { baseUrl } from '../constants';
 
 const Dropdown = () => {
+    const symbols = [
+        "ALLBANKS",
+        "FINANCIALS",
+        "MAINIDX",
+        "MIDCAP"
+    ]
+    const dispatch = useDispatch()
     const [selectedIndex, setSelectedIndex] = useState('');
     const [selectedExpiry, setSelectedExpiry] = useState('');
     const [selectedStrike, setSelectedStrike] = useState('');
     const [selectedSymbol, setSelectedSymbol] = useState('');
+    const [selectedSymbolStrikePriceSection, setSelectedSymbolStrikePriceSection] = useState('');
+    const [expiry, setExpiry] = useState('')
+    const [strikePrice, setStrikePrice] = useState('')
+    const [symbolAndDate, setsymbolAndDate] = useState('')
     const [data, setData] = useState([]);
-    const apiUrl = 'http://127.0.0.1:8080/api/symbol_date_option/FINANCIALS+04JUL23'; // Update the API endpoint here
-
+    const apiUrl = `https://2535-2401-4900-57db-5cf3-2c9d-a1b-d4de-4106.in.ngrok.io/api/mount_options`; // Update the API endpoint here
+    /* 
+    /api/symbol_date_option / <string:symbol>+<string:expiry>
+    /api/symbol_price_option/<string:symbol>+<string:price> 
+    */
     useEffect(() => {
         fetchData();
-    }, []);
-
+        handleSetSymbolAndDate()
+    }, [selectedExpiry, selectedSymbol]);
+    const fetchExpiryDate = async (sym) => {
+        const response = await fetch(`${baseUrl}/symbol_option/${sym}`)
+        const data = await response.json()
+        setExpiry(data.expiry);
+        setSelectedExpiry('')
+    }
+    const fetchStrikePrice = async (sym) => {
+        const response = await fetch(`${baseUrl}/symbol_option/${sym}`)
+        const data = await response.json()
+        console.log("🚀 ~ file: dropdown.js:44 ~ fetchStrikePrice ~ data   ~~~  :", data)
+        setStrikePrice(data.strike_price);
+        setSelectedStrike('')
+    }
     const fetchData = async () => {
         try {
             const response = await fetch(apiUrl);
@@ -25,6 +55,14 @@ const Dropdown = () => {
         }
     };
 
+    const handleSetSymbolAndDate = () => {
+        console.log(typeof (selectedExpiry));
+        console.log(typeof (selectedSymbol));
+        if ((selectedExpiry && selectedSymbol) !== '') {
+            dispatch(setSymbolAndExpiry(`${selectedSymbol}+` + selectedExpiry))
+        }
+    }
+
     const handleIndexChange = (index) => {
         setSelectedIndex(index);
     };
@@ -32,6 +70,7 @@ const Dropdown = () => {
     const handleExpiryChange = (expiry) => {
         setSelectedExpiry(expiry);
         setSelectedIndex(''); // Reset selectedIndex when expiry changes
+
     };
 
     const handleStrikeChange = (strike) => {
@@ -41,63 +80,93 @@ const Dropdown = () => {
 
     const handleSymbolChange = (symbol) => {
         setSelectedSymbol(symbol);
+        fetchExpiryDate(symbol)
         setSelectedIndex(''); // Reset selectedIndex when symbol changes
     };
-    
+    const handleSymbolChangeStrikePriceSection = (symbol) => {
+        setSelectedSymbolStrikePriceSection(symbol);
+        fetchStrikePrice(symbol)
+        setSelectedIndex(''); // Reset selectedIndex when symbol changes
+    };
 
+    //symbolAndExpiry
     return (
         <div>
-            {/* Index */}
+            <table className="">
+                <tr className="" >
+                    <td style={{ borderWidth: 1, }}>
+                        <tr className="">
+                            <td>select symbol</td>
 
-            {/* Expiry */}
-            <div className='dropdown-left-2'>
-                <label className='button-label'>Expiry Date</label>
-                <NavDropdown
-                    className='dropdown-2'
-                    title={selectedExpiry || 'Select'}
-                    onSelect={handleExpiryChange}
-                >
-                    {data.expiry_dates &&
-                        data.expiry_dates.map((expiry, index) => (
-                            <NavDropdown.Item key={index} eventKey={expiry}>
-                                {expiry}
-                            </NavDropdown.Item>
-                        ))}
-                </NavDropdown>
-            </div>
+                            <td><NavDropdown
+                                className='dropdown-2'
+                                title={selectedSymbol || 'Symbol'}
+                                onSelect={handleSymbolChange}
+                            >
+                                {
+                                    symbols.map((symbol, index) => (
+                                        <NavDropdown.Item key={index} eventKey={symbol}>
+                                            {symbol}
+                                        </NavDropdown.Item>
+                                    ))}
+                            </NavDropdown></td>
+                        </tr>
+                        <tr className="">
+                            <td>select Expiry Date</td>
+                            <td><NavDropdown
+                                className='dropdown-2'
+                                title={selectedExpiry || 'Select'}
+                                onSelect={handleExpiryChange}
+                            >
+                                {expiry && expiry.map((expiry, index) => (
+                                    <NavDropdown.Item key={index} eventKey={expiry}>
+                                        {expiry}
+                                    </NavDropdown.Item>
+                                ))}
+                            </NavDropdown></td>
+                        </tr>
+                    </td>
+                    <td className="" style={{ paddingRight: 10 }}>{" "}</td>
+                    <td style={{ borderWidth: 1 }}>
+                        <tr className="">
+                            <td>select symbol</td>
 
-            {/* Strike Price */}
-            <label className='button-label'>Strike Price</label>
-            <NavDropdown
-                className='dropdown-2'
-                title={selectedStrike || 'Strike Price'}
-                onSelect={handleStrikeChange}
-            >
-                {data.strike_price &&
-                    data.strike_price.map((strike, index) => (
-                        <NavDropdown.Item key={index} eventKey={strike}>
-                            {strike}
-                        </NavDropdown.Item>
-                    ))}
-            </NavDropdown>
-
-            {/* Symbol */}
-            <label className='button-label'>Symbol</label>
-            <NavDropdown
-                className='dropdown-2'
-                title={selectedSymbol || 'Symbol'}
-                onSelect={handleSymbolChange}
-            >
-                {data.symbols &&
-                    data.symbols.map((symbol, index) => (
-                        <NavDropdown.Item key={index} eventKey={symbol}>
-                            {symbol}
-                        </NavDropdown.Item>
-                    ))}
-            </NavDropdown>
+                            <td><NavDropdown
+                                className='dropdown-2'
+                                title={selectedSymbolStrikePriceSection || 'Symbol'}
+                                onSelect={handleSymbolChangeStrikePriceSection}
+                            >
+                                {symbols.map((symbol, index) => (
+                                    <NavDropdown.Item key={index} eventKey={symbol}>
+                                        {symbol}
+                                    </NavDropdown.Item>
+                                ))}
+                            </NavDropdown></td>
+                        </tr>
+                        <tr className="">
+                            <td>select Strike Price</td>
+                            <td><NavDropdown
+                                className='dropdown-2'
+                                title={selectedStrike || 'Strike Price'}
+                                onSelect={handleStrikeChange}
+                            >
+                                {strikePrice &&
+                                    strikePrice.map((strike, index) => (
+                                        <NavDropdown.Item key={index} eventKey={strike}>
+                                            {strike}
+                                        </NavDropdown.Item>
+                                    ))}
+                            </NavDropdown></td>
+                        </tr>
+                    </td>
+                </tr>
+            </table>
             {/* <OptionTable selIndex={selectedIndex} selExpiry={selectedExpiry} selStrike={selectedStrike} selSymbol={selectedSymbol}></OptionTable> */}
         </div>
     );
 };
 
 export default Dropdown;
+
+
+

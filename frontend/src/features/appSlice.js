@@ -1,8 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    strikePrice: 0,
-    symbol: '',
-    expiryDate: '',
+    symbolAndExpiry: '',
+    symbolAndStrikeSprice: ''
 };
-createSlice({ name: 'app', initialState, reducers: { symAndExpiry: (state, action) => { state.symbol = action.payload }, decrement: state => { state.value -= 1; } } });
+const appSlice = createSlice({ name: 'app', initialState, reducers: { setSymbolAndExpiry: (state, action) => { state.symbolAndExpiry = action.payload }, setSymbolAndStrikeSprice: (state, action) => state.symbolAndStrikeSprice = action.payload } });
+
+export const { setSymbolAndExpiry, setSymbolAndStrikeSprice } = appSlice.actions
+
+export default appSlice.reducer
