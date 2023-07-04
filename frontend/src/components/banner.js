@@ -37,7 +37,7 @@ function Banner() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('https://2535-2401-4900-57db-5cf3-2c9d-a1b-d4de-4106.in.ngrok.io/api/mount_options');
+                const response = await fetch('https://caf7-2401-4900-57eb-86db-2c9d-a1b-d4de-4106.in.ngrok.io/api/mount_options');
                 const data = await response.json();
                 setIndexPrice(data.index_price);
                 setIndexDataTimestamp(data.index_data_timestamp);

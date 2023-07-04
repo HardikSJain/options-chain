@@ -1,6 +1,21 @@
+DELETE FROM all_expiry_symbols_meta;
+DELETE FROM calls;
+DELETE FROM puts;
+DELETE FROM futures;
+DELETE FROM indexes;
+
+CREATE TABLE "all_expiry_symbols_meta" (
+	"symbol"	TEXT NOT NULL,
+	"expiry_date"	DATETIME,
+	"call"	INTEGER DEFAULT 0,
+	"put"	INTEGER DEFAULT 0,
+	"future"	INTEGER DEFAULT 0,
+	PRIMARY KEY("symbol","expiry_date")
+);
+
 CREATE TABLE "calls" (
 	"symbol"	TEXT NOT NULL,
-	"expiry_date"	DATE NOT NULL,
+	"expiry_date"	DATETIME NOT NULL,
 	"strike_price"	INTEGER NOT NULL,
 	"LTP"	INTEGER NOT NULL,
 	"LTQ"	INTEGER NOT NULL,
@@ -17,9 +32,9 @@ CREATE TABLE "calls" (
 	PRIMARY KEY("expiry_date","symbol","strike_price")
 );
 
-CREATE TABLE "financials" (
+CREATE TABLE "futures" (
 	"symbol"	TEXT NOT NULL,
-	"expiry_date"	DATE NOT NULL,
+	"expiry_date"	DATETIME NOT NULL,
 	"LTP"	INTEGER NOT NULL,
 	"LTQ"	INTEGER NOT NULL,
 	"totalTradedVolume"	INTEGER NOT NULL,
@@ -54,7 +69,7 @@ CREATE TABLE "indexes" (
 
 CREATE TABLE "puts" (
 	"symbol"	TEXT NOT NULL,
-	"expiry_date"	DATE NOT NULL,
+	"expiry_date"	DATETIME NOT NULL,
 	"strike_price"	INTEGER NOT NULL,
 	"LTP"	INTEGER NOT NULL,
 	"LTQ"	INTEGER NOT NULL,

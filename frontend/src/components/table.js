@@ -20,7 +20,7 @@ const OptionTable = () => {
                 // } else {
                 // url = `${baseUrl}/symbol_date_option/${query}`;
                 if (query == '') {
-                    url = `https://2535-2401-4900-57db-5cf3-2c9d-a1b-d4de-4106.in.ngrok.io/api/mount_options`;
+                    url = `https://caf7-2401-4900-57eb-86db-2c9d-a1b-d4de-4106.in.ngrok.io/api/mount_options`;
                 } else {
                     url = `${baseUrl}/symbol_date_option/${query}`;
                 }

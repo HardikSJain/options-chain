@@ -23,7 +23,7 @@ const Dropdown = () => {
     const [strikePrice, setStrikePrice] = useState('')
     const [symbolAndDate, setsymbolAndDate] = useState('')
     const [data, setData] = useState([]);
-    const apiUrl = `https://2535-2401-4900-57db-5cf3-2c9d-a1b-d4de-4106.in.ngrok.io/api/mount_options`; // Update the API endpoint here
+    const apiUrl = `https://caf7-2401-4900-57eb-86db-2c9d-a1b-d4de-4106.in.ngrok.io/api/mount_options`; // Update the API endpoint here
     /* 
     /api/symbol_date_option / <string:symbol>+<string:expiry>
     /api/symbol_price_option/<string:symbol>+<string:price> 

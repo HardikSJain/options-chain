@@ -8,6 +8,7 @@ from sqlalchemy.types import DateTime,Date
 import os
 import datetime
 
+
 current_dir=os.path.abspath(os.path.dirname(__file__))
 SQLALCHEMY_DATABASE_URL="sqlite:///"+os.path.join(current_dir,"edelweiss_hackathon.sqlite3")
 engine=create_engine(SQLALCHEMY_DATABASE_URL,connect_args={"check_same_thread":False})
