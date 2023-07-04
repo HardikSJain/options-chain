@@ -43,6 +43,7 @@ const Dropdown = () => {
         setSelectedSymbol(symbol);
         setSelectedIndex(''); // Reset selectedIndex when symbol changes
     };
+    
 
     return (
         <div>
